@@ -1,0 +1,12 @@
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\obj\Debug\net9.0\BarberShop.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\obj\Debug\net9.0\BarberShop.Core.AssemblyInfoInputs.cache
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\obj\Debug\net9.0\BarberShop.Core.AssemblyInfo.cs
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\obj\Debug\net9.0\BarberShop.Core.csproj.CoreCompileInputs.cache
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\bin\Debug\net9.0\BarberShop.Core.deps.json
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\bin\Debug\net9.0\BarberShop.Core.dll
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\bin\Debug\net9.0\BarberShop.Core.pdb
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\obj\Debug\net9.0\BarberShop.Core.csproj.AssemblyReference.cache
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\obj\Debug\net9.0\BarberShop.Core.dll
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\obj\Debug\net9.0\refint\BarberShop.Core.dll
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\obj\Debug\net9.0\BarberShop.Core.pdb
+C:\Users\Brt\OneDrive\Masaüstü\berber_projesi\BarberShop.Core\obj\Debug\net9.0\ref\BarberShop.Core.dll

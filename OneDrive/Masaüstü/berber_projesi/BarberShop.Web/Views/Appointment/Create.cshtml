@@ -1,0 +1,153 @@
+@model BarberShop.Core.DTOs.AppointmentCreateViewModel
+@{
+    ViewData["Title"] = "Randevu Al";
+    var barbers = ViewBag.Barbers as IEnumerable<Barber>;
+    var services = ViewBag.Services as IEnumerable<Service>;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-calendar-plus display-3 text-primary"></i>
+                    <h2 class="mt-3">Randevu Al</h2>
+                    <p class="text-muted">Berber, hizmet ve uygun saati seçin</p>
+                </div>
+                
+                <form asp-action="Create" method="post" id="appointmentForm">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="BarberId" class="form-label"></label>
+                            <select asp-for="BarberId" class="form-select" id="barberId">
+                                <option value="">-- Berber Seçin --</option>
+                                @if (barbers != null)
+                                {
+                                    @foreach (var barber in barbers)
+                                    {
+                                        <option value="@barber.Id">@barber.Name</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="BarberId" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ServiceId" class="form-label"></label>
+                            <select asp-for="ServiceId" class="form-select" id="serviceId">
+                                <option value="">-- Hizmet Seçin --</option>
+                                @if (services != null)
+                                {
+                                    @foreach (var service in services)
+                                    {
+                                        <option value="@service.Id" data-price="@service.Price" data-duration="@service.DurationMinutes">
+                                            @service.Name - @service.Price.ToString("C0") (@service.DurationMinutes dk)
+                                        </option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="ServiceId" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="AppointmentDate" class="form-label"></label>
+                            <input asp-for="AppointmentDate" type="date" class="form-control" id="appointmentDate" 
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="AppointmentDate" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="StartTime" class="form-label"></label>
+                            <select asp-for="StartTime" class="form-select" id="startTime" disabled>
+                                <option value="">-- Önce tarih seçin --</option>
+                            </select>
+                            <span asp-validation-for="StartTime" class="text-danger small"></span>
+                            <div id="loadingSlots" class="text-muted small mt-1" style="display: none;">
+                                <i class="bi bi-hourglass-split"></i> Müsait saatler yükleniyor...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label asp-for="Notes" class="form-label"></label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Varsa eklemek istediğiniz not..."></textarea>
+                    </div>
+                    
+                    <div id="summaryCard" class="card mb-4 p-3" style="display: none; background: rgba(102, 126, 234, 0.2);">
+                        <h6 class="mb-2"><i class="bi bi-receipt me-2"></i>Randevu Özeti</h6>
+                        <p class="mb-1"><strong>Hizmet:</strong> <span id="summaryService">-</span></p>
+                        <p class="mb-1"><strong>Süre:</strong> <span id="summaryDuration">-</span> dakika</p>
+                        <p class="mb-0"><strong>Ücret:</strong> <span id="summaryPrice" class="service-price">-</span></p>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        <i class="bi bi-check-circle me-2"></i>Randevuyu Onayla
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+$(document).ready(function() {
+    function loadTimeSlots() {
+        var barberId = $('#barberId').val();
+        var serviceId = $('#serviceId').val();
+        var date = $('#appointmentDate').val();
+        
+        if (barberId && serviceId && date) {
+            $('#startTime').prop('disabled', true);
+            $('#loadingSlots').show();
+            
+            $.get('@Url.Action("GetAvailableSlots", "Appointment")', {
+                barberId: barberId,
+                date: date,
+                serviceId: serviceId
+            }, function(slots) {
+                var select = $('#startTime');
+                select.empty();
+                
+                if (slots.length === 0) {
+                    select.append('<option value="">Müsait saat yok</option>');
+                } else {
+                    select.append('<option value="">-- Saat Seçin --</option>');
+                    $.each(slots, function(i, slot) {
+                        select.append('<option value="' + slot + '">' + slot + '</option>');
+                    });
+                    select.prop('disabled', false);
+                }
+                $('#loadingSlots').hide();
+            });
+        }
+    }
+    
+    function updateSummary() {
+        var serviceOption = $('#serviceId option:selected');
+        if (serviceOption.val()) {
+            var price = serviceOption.data('price');
+            var duration = serviceOption.data('duration');
+            var name = serviceOption.text().split(' - ')[0];
+            
+            $('#summaryService').text(name);
+            $('#summaryDuration').text(duration);
+            $('#summaryPrice').text(price + ' ₺');
+            $('#summaryCard').show();
+        } else {
+            $('#summaryCard').hide();
+        }
+    }
+    
+    $('#barberId, #appointmentDate').change(loadTimeSlots);
+    $('#serviceId').change(function() {
+        loadTimeSlots();
+        updateSummary();
+    });
+});
+</script>
+}

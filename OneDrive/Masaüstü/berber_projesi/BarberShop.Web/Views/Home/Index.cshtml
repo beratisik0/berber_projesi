@@ -1,0 +1,137 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+    var announcements = ViewBag.Announcements as IEnumerable<Announcement>;
+    var services = ViewBag.Services as IEnumerable<Service>;
+    var barbers = ViewBag.Barbers as IEnumerable<Barber>;
+}
+
+<!-- Hero Section -->
+<section class="hero-section text-center text-white">
+    <div class="container position-relative">
+        <h1 class="display-4 fw-bold mb-4">
+            <i class="bi bi-scissors me-3"></i>Profesyonel Berber Hizmeti
+        </h1>
+        <p class="lead mb-4">Online randevu alın, bekleme derdi yaşamayın!</p>
+        @if (!User.Identity?.IsAuthenticated ?? true)
+        {
+            <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-5 me-3">
+                <i class="bi bi-person-plus me-2"></i>Hemen Kayıt Ol
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Appointment" asp-action="Create" class="btn btn-light btn-lg px-5">
+                <i class="bi bi-calendar-plus me-2"></i>Randevu Al
+            </a>
+        }
+    </div>
+</section>
+
+<div class="container">
+    <!-- Announcements -->
+    @if (announcements?.Any() == true)
+    {
+        <section class="mb-5">
+            <h2 class="text-center mb-4"><i class="bi bi-megaphone me-2"></i>Duyurular</h2>
+            <div class="row g-4">
+                @foreach (var announcement in announcements)
+                {
+                    <div class="col-md-6">
+                        <div class="card announcement-card p-4">
+                            <h5 class="mb-2">@announcement.Title</h5>
+                            <p class="text-muted mb-1">@announcement.Content</p>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>@announcement.CreatedAt.ToString("dd MMMM yyyy")
+                            </small>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- Services -->
+    <section class="mb-5">
+        <h2 class="text-center mb-4"><i class="bi bi-list-stars me-2"></i>Hizmetlerimiz</h2>
+        <div class="row g-4">
+            @if (services != null)
+            {
+                @foreach (var service in services.Take(4))
+                {
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 p-4 text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-scissors display-4 text-primary"></i>
+                            </div>
+                            <h5>@service.Name</h5>
+                            <p class="text-muted small">@service.Description</p>
+                            <div class="service-price">@service.Price.ToString("C0")</div>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>@service.DurationMinutes dk
+                            </small>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <div class="text-center mt-4">
+            <a asp-action="Services" class="btn btn-outline-light">
+                <i class="bi bi-arrow-right me-2"></i>Tüm Hizmetleri Gör
+            </a>
+        </div>
+    </section>
+
+    <!-- Barbers -->
+    <section class="mb-5">
+        <h2 class="text-center mb-4"><i class="bi bi-people me-2"></i>Berberlerimiz</h2>
+        <div class="row g-4 justify-content-center">
+            @if (barbers != null)
+            {
+                @foreach (var barber in barbers)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 p-4 text-center">
+                            <div class="mb-3">
+                                <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-person display-5 text-white"></i>
+                                </div>
+                            </div>
+                            <h5>@barber.Name</h5>
+                            <p class="text-muted small">@barber.Description</p>
+                            @if (!string.IsNullOrEmpty(barber.Phone))
+                            {
+                                <small class="text-muted">
+                                    <i class="bi bi-telephone me-1"></i>@barber.Phone
+                                </small>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="text-center py-5">
+        <div class="card p-5" style="background: var(--primary-gradient);">
+            <h3 class="mb-3">Hemen Randevu Alın!</h3>
+            <p class="mb-4">Birkaç tıkla randevunuzu oluşturun, size en uygun saati seçin.</p>
+            @if (!User.Identity?.IsAuthenticated ?? true)
+            {
+                <div>
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg">
+                        <i class="bi bi-person-plus me-2"></i>Kayıt Ol
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <a asp-controller="Appointment" asp-action="Create" class="btn btn-light btn-lg">
+                        <i class="bi bi-calendar-plus me-2"></i>Randevu Al
+                    </a>
+                </div>
+            }
+        </div>
+    </section>
+</div>

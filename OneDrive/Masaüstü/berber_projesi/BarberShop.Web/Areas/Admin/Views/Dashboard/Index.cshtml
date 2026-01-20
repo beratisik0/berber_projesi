@@ -1,0 +1,95 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    var recentAppointments = ViewBag.RecentAppointments as IEnumerable<Appointment>;
+}
+
+<div class="page-header">
+    <h1><i class="bi bi-speedometer2 me-2"></i>Dashboard</h1>
+    <p class="text-muted mb-0">Hoş geldiniz! İşletmenizin özet bilgileri aşağıda yer almaktadır.</p>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-3">
+        <div class="card stat-card" style="border-left: 4px solid #28a745;">
+            <i class="bi bi-calendar-check text-success"></i>
+            <h3>@ViewBag.TodayAppointments</h3>
+            <p>Bugünkü Randevular</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card stat-card" style="border-left: 4px solid #007bff;">
+            <i class="bi bi-calendar-week text-primary"></i>
+            <h3>@ViewBag.WeekAppointments</h3>
+            <p>Bu Hafta</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card stat-card" style="border-left: 4px solid #ffc107;">
+            <i class="bi bi-people text-warning"></i>
+            <h3>@ViewBag.TotalBarbers</h3>
+            <p>Berber</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card stat-card" style="border-left: 4px solid #17a2b8;">
+            <i class="bi bi-list-check text-info"></i>
+            <h3>@ViewBag.TotalServices</h3>
+            <p>Hizmet</p>
+        </div>
+    </div>
+</div>
+
+<div class="card p-4">
+    <h5 class="mb-4"><i class="bi bi-clock-history me-2"></i>Bugünkü Randevular</h5>
+    @if (recentAppointments?.Any() == true)
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Saat</th>
+                        <th>Müşteri</th>
+                        <th>Berber</th>
+                        <th>Hizmet</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var appointment in recentAppointments)
+                    {
+                        var statusClass = appointment.Status switch
+                        {
+                            AppointmentStatus.Confirmed => "bg-success",
+                            AppointmentStatus.Pending => "bg-warning",
+                            AppointmentStatus.Completed => "bg-info",
+                            AppointmentStatus.Cancelled => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+                        var statusText = appointment.Status switch
+                        {
+                            AppointmentStatus.Confirmed => "Onaylı",
+                            AppointmentStatus.Pending => "Bekliyor",
+                            AppointmentStatus.Completed => "Tamamlandı",
+                            AppointmentStatus.Cancelled => "İptal",
+                            _ => "Bilinmiyor"
+                        };
+                        <tr>
+                            <td>@appointment.StartTime.ToString(@"hh\:mm")</td>
+                            <td>@appointment.User?.FullName</td>
+                            <td>@appointment.Barber?.Name</td>
+                            <td>@appointment.Service?.Name</td>
+                            <td><span class="badge @statusClass">@statusText</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted text-center py-4">
+            <i class="bi bi-calendar-x display-4 d-block mb-3"></i>
+            Bugün için randevu bulunmuyor.
+        </p>
+    }
+</div>

@@ -1,0 +1,39 @@
+@model IEnumerable<Barber>
+@{
+    ViewData["Title"] = "Berberlerimiz";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">
+        <i class="bi bi-people me-2"></i>Berberlerimiz
+    </h1>
+    
+    <div class="row g-4 justify-content-center">
+        @foreach (var barber in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 p-4 text-center">
+                    <div class="mb-3">
+                        <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                            <i class="bi bi-person display-4 text-white"></i>
+                        </div>
+                    </div>
+                    <h4>@barber.Name</h4>
+                    <p class="text-muted">@barber.Description</p>
+                    @if (!string.IsNullOrEmpty(barber.Phone))
+                    {
+                        <p class="text-muted">
+                            <i class="bi bi-telephone me-2"></i>@barber.Phone
+                        </p>
+                    }
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-controller="Appointment" asp-action="Create" class="btn btn-outline-primary">
+                            <i class="bi bi-calendar-plus me-1"></i>Randevu Al
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

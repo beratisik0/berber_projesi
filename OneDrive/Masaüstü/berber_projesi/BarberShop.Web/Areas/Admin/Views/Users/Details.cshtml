@@ -1,0 +1,122 @@
+@model IEnumerable<Appointment>
+@{
+    ViewData["Title"] = "Müşteri Detayı";
+    var user = ViewBag.User as ApplicationUser;
+    var role = ViewBag.Role as string;
+}
+
+<div class="page-header">
+    <a asp-action="Index" class="btn btn-outline-secondary mb-3">
+        <i class="bi bi-arrow-left me-2"></i>Geri
+    </a>
+    <h1><i class="bi bi-person me-2"></i>@user?.FullName</h1>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card p-4">
+            <h5 class="mb-3"><i class="bi bi-info-circle me-2"></i>Kullanıcı Bilgileri</h5>
+            <p class="mb-2"><strong>E-posta:</strong> @user?.Email</p>
+            <p class="mb-2"><strong>Telefon:</strong> @(user?.PhoneNumber ?? "-")</p>
+            <p class="mb-2"><strong>Rol:</strong> 
+                @if (role == "Admin")
+                {
+                    <span class="badge bg-danger">Admin</span>
+                }
+                else
+                {
+                    <span class="badge bg-primary">Müşteri</span>
+                }
+            </p>
+            <p class="mb-2"><strong>Kayıt:</strong> @user?.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+            <p class="mb-0"><strong>Durum:</strong> 
+                @if (user?.IsActive == true)
+                {
+                    <span class="badge bg-success">Aktif</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Pasif</span>
+                }
+            </p>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card p-4">
+            <h5 class="mb-3"><i class="bi bi-bar-chart me-2"></i>İstatistikler</h5>
+            <div class="row text-center">
+                <div class="col-4">
+                    <h3 class="text-primary">@Model.Count()</h3>
+                    <small class="text-muted">Toplam Randevu</small>
+                </div>
+                <div class="col-4">
+                    <h3 class="text-success">@Model.Count(a => a.Status == AppointmentStatus.Completed)</h3>
+                    <small class="text-muted">Tamamlanan</small>
+                </div>
+                <div class="col-4">
+                    <h3 class="text-danger">@Model.Count(a => a.Status == AppointmentStatus.Cancelled)</h3>
+                    <small class="text-muted">İptal</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-transparent border-0">
+        <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Randevu Geçmişi</h5>
+    </div>
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Saat</th>
+                        <th>Berber</th>
+                        <th>Hizmet</th>
+                        <th>Fiyat</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var appointment in Model)
+                    {
+                        var statusClass = appointment.Status switch
+                        {
+                            AppointmentStatus.Confirmed => "bg-success",
+                            AppointmentStatus.Pending => "bg-warning",
+                            AppointmentStatus.Completed => "bg-info",
+                            AppointmentStatus.Cancelled => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+                        var statusText = appointment.Status switch
+                        {
+                            AppointmentStatus.Confirmed => "Onaylı",
+                            AppointmentStatus.Pending => "Bekliyor",
+                            AppointmentStatus.Completed => "Tamamlandı",
+                            AppointmentStatus.Cancelled => "İptal",
+                            _ => "-"
+                        };
+                        <tr>
+                            <td>@appointment.AppointmentDate.ToString("dd.MM.yyyy")</td>
+                            <td>@appointment.StartTime.ToString(@"hh\:mm")</td>
+                            <td>@appointment.Barber?.Name</td>
+                            <td>@appointment.Service?.Name</td>
+                            <td class="text-success">@appointment.TotalPrice.ToString("C0")</td>
+                            <td><span class="badge @statusClass">@statusText</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-x display-3 text-muted d-block mb-3"></i>
+            <p class="text-muted">Henüz randevu kaydı bulunmuyor.</p>
+        </div>
+    }
+</div>

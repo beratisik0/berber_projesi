@@ -1,0 +1,49 @@
+@model IEnumerable<Service>
+@{
+    ViewData["Title"] = "Hizmetlerimiz";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">
+        <i class="bi bi-list-stars me-2"></i>Hizmetlerimiz
+    </h1>
+    
+    <div class="row g-4">
+        @foreach (var service in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                            <i class="bi bi-scissors text-white"></i>
+                        </div>
+                        <h5 class="mb-0">@service.Name</h5>
+                    </div>
+                    <p class="text-muted">@service.Description</p>
+                    <hr style="border-color: rgba(255,255,255,0.1);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="service-price">@service.Price.ToString("C0")</span>
+                        <span class="badge bg-secondary">
+                            <i class="bi bi-clock me-1"></i>@service.DurationMinutes dk
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+    <div class="text-center mt-5">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-controller="Appointment" asp-action="Create" class="btn btn-primary btn-lg">
+                <i class="bi bi-calendar-plus me-2"></i>Randevu Al
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg">
+                <i class="bi bi-person-plus me-2"></i>Randevu Almak İçin Kayıt Ol
+            </a>
+        }
+    </div>
+</div>
